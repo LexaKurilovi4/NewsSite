@@ -1,0 +1,10 @@
+<div class="categories">
+    <a href="{% url 'news_portal:category' 0 %}">Category</a>
+    <ul>
+        {% for category in categories %}
+            <li>
+               <a href="{% url 'news_portal:category' category.id %}">{{category.category_name}}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

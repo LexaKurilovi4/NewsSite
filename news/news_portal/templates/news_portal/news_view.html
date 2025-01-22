@@ -1,0 +1,23 @@
+{% extends "news_portal/base.html" %}
+{% block content %}
+<div class="news">
+	<div class="news-header">
+		<div class="news-title">
+			{{news.news_title|upper}}
+		</div>
+			<img src="/media/{{news.title_picture.name}}" class="news-title-picture">
+		<div class="news-info">
+			<div class="news-date">{{news.date_published}}</div>
+			<div class="news-author">Author: {{news.author}}</div>
+			<div class="news-source">Source: {{news.source}}</div>
+			<div class="news-category">Categories: {{news.category.all|join:" | "}}
+			</div>
+		</div>
+	</div>
+	<div class="news-body">
+		{%autoescape off%}
+		{{news.news_text|linebreaks}}
+		{%endautoescape%}
+	</div>
+</div>
+{% endblock %}

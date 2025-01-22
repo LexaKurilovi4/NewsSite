@@ -1,0 +1,19 @@
+{% extends "news_portal/base.html" %}
+{% block content %}
+
+<ul class="result-list">
+{% for news in page_obj %}
+	<li>
+		<a href="{% url 'news_portal:news_view' news.id %}">
+			<div class="level-title">{{news.news_title}}</div>
+			<div class="news-card">
+				<div class="card-author">{{news.author}}</div>
+				<div class="card-source">{{news.source}}</div>
+				<div class="card-date">{{news.date_published|date:"d.m.Y"}}</div>
+			</div>
+			<div class="news_brief">{{news.news_text|truncatechars:100}}</div>
+		</a>
+	</li>
+{% endfor %}
+</ul>
+{% endblock %}

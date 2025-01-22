@@ -1,0 +1,16 @@
+{%load static%}
+<header>
+	<div class="header-logo">
+		<a href="{% url 'news_portal:news_list' %}">Site Title</a>
+	</div>
+	<nav>
+		<ul>
+			<li><a href="#">Main</a></li>
+			<li><a href="#">News</a></li>
+		</ul>
+	</nav> 
+	<div class="search">
+		<input type="search" data-url="{% url 'news_portal:search' ' ' %}">
+		<img src="{% static 'news_portal/images/loop.svg' %}">
+	</div>
+</header>	

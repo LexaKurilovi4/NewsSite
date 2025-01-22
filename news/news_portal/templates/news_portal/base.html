@@ -1,0 +1,9 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'news_portal/style.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<script src="{% static 'news_portal/script.js' %}" defer></script>
+{% include 'news_portal/header.html' %}
+{% block content %}{% endblock %}
+{% include 'news_portal/footer.html' %}

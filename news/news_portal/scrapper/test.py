@@ -1,18 +1,5 @@
 from bs4 import BeautifulSoup
-from ..models import News
 import requests
-
-# def get_news_objects():
-#     news_links_list = get_news_links()
-#     news_objects_list = []
-#     for link in news_links_list:
-#         news_dict = get_news_body(link)
-#         news_objects_list.append(News(
-#             news_title=news_dict["title"],
-#             news_text=news_dict["news_text"],
-#             title_picture=news_dict["pictures"]["1"],
-#             pictures=news_dict["pictures"]
-#         ))
 
 
 class HabrScrapper:
@@ -59,5 +46,3 @@ class HabrScrapper:
             "category_name": "IT",
             "pictures": news_pictures
         }
-
-

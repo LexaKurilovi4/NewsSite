@@ -94,7 +94,7 @@ def get_tags(request):
     return JsonResponse(data)
 
 
-def scrapp_news():
+def scrapp_habr_news():
     scrapper = HabrScrapper()
     f = open("scrapper/habr.txt", "r")
     last_link = f.readline()
@@ -103,3 +103,22 @@ def scrapp_news():
         file.write(scrapper.news_links[0])
     if last_link in scrapper.news_links:
         scrapper.news_links = scrapper.news_links[:scrapper.index(last_link)]
+    news = []
+    authors = []
+    for author in Author.objects.all():
+        authors.append(author.author_name)
+    for link in scrapper.news_links:
+        news_object = scrapper.get_news_body(link)
+        if news_object["author_name"] not in authors:
+            author = Author(author_name=news_object["author_name"])
+            author.save()
+        news.append(News(
+            news_title=news_object["title"],
+            news_text=news_object["text"],
+            date_published=timezone.now(),
+            source=Source.objects.filter(source_name__iexact=news_object["source"]),
+            author=Author.objects.filter(author_name__iexact=news_object["author_name"]),
+            category=Category.objects.filter(category_name__iexact=news_object["category_name"]),
+            pictures=news_object["pictures"]
+        ))
+

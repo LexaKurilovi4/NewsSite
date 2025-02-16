@@ -4,8 +4,8 @@ import requests
 
 class HabrScrapper:
     def __init__(self):
-        self.news_links = self.get_news_links()
         self.host = "https://habr.com/"
+        self.news_links = self.get_news_links()
 
     def get_news_links(self):
         html = requests.get(self.host + "ru/news/")

@@ -1,12 +1,7 @@
-import datetime
-import json
-
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from django.utils import timezone
 from .models import *
-from scrapper.test import HabrScrapper
+from .test import HabrScrapper
 
 
 class NewsListView(generic.ListView):
@@ -96,13 +91,13 @@ def get_tags(request):
 
 def scrapp_habr_news():
     scrapper = HabrScrapper()
-    f = open("scrapper/habr.txt", "r")
-    last_link = f.readline()
-    f.close()
-    with open("scrapper/habr.txt", "w") as file:
-        file.write(scrapper.news_links[0])
-    if last_link in scrapper.news_links:
-        scrapper.news_links = scrapper.news_links[:scrapper.index(last_link)]
+    # f = open("static/news_portal/habr.txt", "r")
+    # last_link = f.readline()
+    # f.close()
+    # with open("static/news_portal/habr.txt", "w") as file:
+    #     file.write(scrapper.news_links[0])
+    # if last_link in scrapper.news_links:
+    #     scrapper.news_links = scrapper.news_links[:scrapper.index(last_link)]
     news = []
     authors = []
     for author in Author.objects.all():
@@ -114,11 +109,13 @@ def scrapp_habr_news():
             author.save()
         news.append(News(
             news_title=news_object["title"],
-            news_text=news_object["text"],
+            news_text=news_object["news_text"],
             date_published=timezone.now(),
-            source=Source.objects.filter(source_name__iexact=news_object["source"]),
-            author=Author.objects.filter(author_name__iexact=news_object["author_name"]),
-            category=Category.objects.filter(category_name__iexact=news_object["category_name"]),
+            source=Source.objects.filter(source_name__iexact=news_object["source"])[0],
+            author=Author.objects.filter(author_name__iexact=news_object["author_name"])[0],
+            #category=Category.objects.filter(category_name__iexact=news_object["category_name"]),
             pictures=news_object["pictures"]
         ))
+    News.objects.bulk_create(news)
+    return news
 

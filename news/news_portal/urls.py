@@ -9,5 +9,5 @@ urlpatterns = [
     path('tags/', views.get_tags, name='tags'),
     path('search/<query>', views.SearchListView.as_view(), name='search'),
     path('category/<int:pk>', views.CategoryListView.as_view(), name='category'),
-    path('news/scrapp_habr>', views.scrapp_habr_news(), name='scrapp_habr'),
+    path('news/scrapp_habr>', views.scrapp_habr_news, name='scrapp_habr'),
 ]

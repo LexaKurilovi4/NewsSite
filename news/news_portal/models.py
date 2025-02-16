@@ -31,7 +31,7 @@ class News(models.Model):
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
     author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True)
     category = models.ManyToManyField(Category)
-    title_picture = models.FileField()
+    title_picture = models.URLField()
     pictures = models.JSONField()
     news_tags = models.CharField(max_length=200, null=True)
 

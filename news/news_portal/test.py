@@ -24,6 +24,12 @@ class HabrScrapper:
         news_text = ""
         news_pictures = dict()
         author = soup.find("a", class_="tm-user-info__username").text
+        tags_container = soup.find("div", class_="tm-publication-hubs__container").div
+        print(tags_container)
+        tags = ""
+        for tag in tags_container:
+            print(tag)
+            tags += tag.span.a.span.get_text()
         i = 1
         for tag in body:
             if tag.name == "p":
@@ -44,5 +50,6 @@ class HabrScrapper:
             "source": "Habr",
             "author_name": author,
             "category_name": "IT",
-            "pictures": news_pictures
+            "pictures": news_pictures,
+            "tags": tags
         }

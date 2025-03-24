@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.views import generic
 from .models import *
 from .test import HabrScrapper
@@ -62,8 +63,8 @@ class CategoryListView(generic.ListView):
         if self.kwargs.get('pk') == 0:
             context['page_obj'] = News.objects.all().order_by('-date_published')
         else:
-            category = Category.objects.get(pk=self.kwargs.get('pk')).order_by('-date_published')
-            context['page_obj'] = News.objects.filter(category__exact=category)
+            category = Category.objects.get(pk=self.kwargs.get('pk'))
+            context['page_obj'] = News.objects.filter(category__exact=category).order_by('-date_published')
         return context
 
 
@@ -76,7 +77,7 @@ class NewsDetailView(generic.DetailView):
         context = super(NewsDetailView, self).get_context_data(**kwargs)
         news = News.objects.get(pk=self.kwargs.get('pk'))
         for picture in news.pictures:
-            news.news_text = news.news_text.replace('{' + f'{picture}' + '}', f'<img src="{news.pictures[picture]['url']}" width={news.pictures[picture]['width']}>')
+            news.news_text = news.news_text.replace('{' + f'{picture}' + '}', f'<img src="{news.pictures[picture]['url']}">')
         context['news'] = news
         return context
 
@@ -89,7 +90,7 @@ def get_tags(request):
     return JsonResponse(data)
 
 
-def scrapp_habr_news():
+def scrapp_habr_news(request):
     scrapper = HabrScrapper()
     # f = open("static/news_portal/habr.txt", "r")
     # last_link = f.readline()
@@ -109,6 +110,7 @@ def scrapp_habr_news():
             author.save()
         news.append(News(
             news_title=news_object["title"],
+            title_picture=news_object["pictures"]["1"]["url"],
             news_text=news_object["news_text"],
             date_published=timezone.now(),
             source=Source.objects.filter(source_name__iexact=news_object["source"])[0],
@@ -117,5 +119,5 @@ def scrapp_habr_news():
             pictures=news_object["pictures"]
         ))
     News.objects.bulk_create(news)
-    return news
+    return HttpResponseRedirect(reverse("news_portal:news_list"))
 

@@ -4,8 +4,8 @@
 	{% include "news_portal/filter_sidebar.html" %}
 	<ul class="news-list">
 	{% for news in page_obj %}
-		<li>
-			<img src="/media/{{news.title_picture}}" data-id="{{news.id}}">
+		<li style="background-image: url({{news.title_picture}});">
+			<!-- <img src="{{news.title_picture}}" data-id="{{news.id}}"> -->
 			<a href="{% url 'news_portal:news_view' news.id %}" data-id="{{news.id}}"><span>{{news}}</span></a>
 		</li>
 	{% endfor %}

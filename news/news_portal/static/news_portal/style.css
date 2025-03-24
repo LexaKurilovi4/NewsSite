@@ -101,6 +101,7 @@ header nav ul li a:hover {
 }
 
 .news-body p img {
+    max-width: 100%;
     align-self: center;
 }
 
@@ -129,11 +130,8 @@ ul.news-list {
     margin: 10px 1px;
 }
 
-
-.news-list li img {
-    transition: all 0.3s;
-    border-radius: 5px;
-    width: 100%;
+.news-list li:hover {
+    transform: scale(1.1);
 }
 
 .hover {
@@ -151,7 +149,12 @@ ul.news-list {
     color: #fff;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: end;
+}
+
+.news-list li a span{
+    background-color: #000000a6;
+    font-size: 18px;
 }
 
 .search img {
@@ -208,6 +211,7 @@ ul.result-list {
 }
 
 .container-news {
+    width: 100%;
     display: flex;
     align-items: center;
 }
@@ -221,6 +225,6 @@ ul.result-list {
     flex-direction: column;
 }
 
-.categories > a {
+.categories > a { 
     font-size: 20px;
 }

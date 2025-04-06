@@ -99,7 +99,6 @@ def scrapp_habr_news(request):
     #     file.write(scrapper.news_links[0])
     # if last_link in scrapper.news_links:
     #     scrapper.news_links = scrapper.news_links[:scrapper.index(last_link)]
-    news = []
     authors = []
     for author in Author.objects.all():
         authors.append(author.author_name)
@@ -108,7 +107,8 @@ def scrapp_habr_news(request):
         if news_object["author_name"] not in authors:
             author = Author(author_name=news_object["author_name"])
             author.save()
-        news.append(News(
+        news = News(
+            id=news_object["id"],
             news_title=news_object["title"],
             title_picture=news_object["pictures"]["1"]["url"],
             news_text=news_object["news_text"],
@@ -117,7 +117,7 @@ def scrapp_habr_news(request):
             author=Author.objects.filter(author_name__iexact=news_object["author_name"])[0],
             #category=Category.objects.filter(category_name__iexact=news_object["category_name"]),
             pictures=news_object["pictures"]
-        ))
-    News.objects.bulk_create(news)
+        )
+        News.objects.update_or_create(news)
     return HttpResponseRedirect(reverse("news_portal:news_list"))
 

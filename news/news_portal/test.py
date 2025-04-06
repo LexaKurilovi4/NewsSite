@@ -25,17 +25,17 @@ class HabrScrapper:
         news_pictures = dict()
         author = soup.find("a", class_="tm-user-info__username").text
         tags_container = soup.find("div", class_="tm-publication-hubs__container").div
-        print(tags_container)
         tags = ""
         for tag in tags_container:
-            print(tag)
-            tags += tag.span.a.span.get_text()
+            if tag == "[" or tag == "]":
+                continue
+            tags += tag.a.span.get_text() + ","
         i = 1
         for tag in body:
             if tag.name == "p":
                 news_text += tag.text + "\n"
             if tag.name == "figure":
-                news_pictures.update({str(i): {"url": tag.img["src"]}})
+                news_pictures.update({str(i): {"url": tag.img.get("data-src", tag.img["src"])}})
                 news_text += "{" + str(i) + "}"
                 i += 1
             if tag.name == "div":
@@ -44,7 +44,10 @@ class HabrScrapper:
                 i += 1
             if tag.name == "blockquote":
                 news_text += tag.p.text + "\n"
+        if news_pictures == {}:
+            news_pictures.update({"1": {"url": "empty"}})
         return {
+            "id": news_link.split("/")[-2],
             "title": title,
             "news_text": news_text,
             "source": "Habr",

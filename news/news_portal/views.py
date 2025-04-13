@@ -84,9 +84,13 @@ class NewsDetailView(generic.DetailView):
 
 def get_tags(request):
     tags_set = Category.objects.all()
+    news_list = News.objects.all()
     data = {'categories': '', 'tags': ''}
     for category in tags_set:
         data['categories'] = data['categories'] + category.category_name + ';'
+    for news in news_list:
+        data['tags'] = data['tags'] + news.news_tags + ',' if news.news_tags else data['tags']
+    print(data)
     return JsonResponse(data)
 
 
@@ -107,7 +111,7 @@ def scrapp_habr_news(request):
         if news_object["author_name"] not in authors:
             author = Author(author_name=news_object["author_name"])
             author.save()
-        news = News(
+        News.objects.update_or_create(
             id=news_object["id"],
             news_title=news_object["title"],
             title_picture=news_object["pictures"]["1"]["url"],
@@ -116,8 +120,8 @@ def scrapp_habr_news(request):
             source=Source.objects.filter(source_name__iexact=news_object["source"])[0],
             author=Author.objects.filter(author_name__iexact=news_object["author_name"])[0],
             #category=Category.objects.filter(category_name__iexact=news_object["category_name"]),
-            pictures=news_object["pictures"]
+            pictures=news_object["pictures"],
+            news_tags=news_object["tags"]
         )
-        News.objects.update_or_create(news)
     return HttpResponseRedirect(reverse("news_portal:news_list"))
 

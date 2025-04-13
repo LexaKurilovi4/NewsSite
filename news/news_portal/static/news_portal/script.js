@@ -2,25 +2,6 @@ const search_element = document.querySelector("header .search input")
 
 tags = null
 
-const add_mouse_listener = () => {
-	images = document.querySelectorAll(".news-list li img")
-	titles = document.querySelectorAll(".news-list li a")	
-	const map_title_image = new Map()
-	for (image of images) {
-    	id = image.dataset.id
-    	for (title of titles) {
-    		if (title.dataset.id == id) {
-    			map_title_image.set(id, [image, title])
-    			break;
-    		}
-    	}
-	}
-	map_title_image.forEach((value) => {
-		value[1].addEventListener("mouseover", () => value[0].classList.add("hover"))
-		value[1].addEventListener("mouseout", () => value[0].classList.remove("hover"))
-	})
-}
-
 const send_search_request = async (url, data) => {
 	const resp = await fetch(url, {
 		method: "GET", 
@@ -42,7 +23,7 @@ const on_search_click = async (event) => {
 	tags_data = await send_search_request("/tags/", data)
 	tags = await tags_data.json()
 	tags.categories = tags.categories.split(';')
-	tags.tags = tags.tags.split(';')
+	tags.tags = tags.tags.split(',')
 }
 
 const add_prompt = (data) => {
@@ -73,7 +54,7 @@ const on_search_change = (event) => {
 		}
 		return
 	}
-	const pattern = new RegExp("[a-zA-Z]*"+text+"[a-zA-Z]*")
+	const pattern = new RegExp("[a-zA-Zа-яА-Я]*"+text+"[a-zA-Zа-яА-Я]*")
 	search_objects = {"categories": [], "tags": []} 
 
 	for (item of tags.categories) {
@@ -95,7 +76,6 @@ const search = (event) => {
 
 }
 
-document.addEventListener("DOMContentLoaded", () => add_mouse_listener())
 
 search_element.addEventListener("click", () => on_search_click())
 search_element.addEventListener("input", (e) => on_search_change(e))

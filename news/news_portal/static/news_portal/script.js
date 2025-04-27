@@ -41,6 +41,13 @@ const add_prompt = (data) => {
 									</a>
 								</li>\n`
 	}
+	for (item of data.tags) {
+		text_html = text_html + `<li>
+									<a href="${search_url+item}">
+										<div class="prompt">${item}</div>
+									</a>
+								</li>\n`
+	}
 	list.innerHTML = text_html
 	search_container.appendChild(list)
 }
@@ -54,7 +61,7 @@ const on_search_change = (event) => {
 		}
 		return
 	}
-	const pattern = new RegExp("[a-zA-Zа-яА-Я]*"+text+"[a-zA-Zа-яА-Я]*")
+	const pattern = new RegExp("[a-zA-Zа-яА-Я]*"+text+"[a-zA-Zа-яА-Я]*", "i")
 	search_objects = {"categories": [], "tags": []} 
 
 	for (item of tags.categories) {
@@ -64,10 +71,11 @@ const on_search_change = (event) => {
 	}
 
 	for (item of tags.tags) {
-		if (pattern.exec(item)) {
+		if (pattern.test(item)) {
 			search_objects.tags = [...search_objects.tags, pattern.exec(item).input]
 		}
 	}
+	console.log(search_objects)
 
 	add_prompt(search_objects)
 }

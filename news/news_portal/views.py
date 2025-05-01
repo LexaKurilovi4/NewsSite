@@ -31,6 +31,7 @@ class SearchListView(generic.ListView):
         news_title_match = News.objects.filter(news_title__icontains=query)
         news_text_match = News.objects.filter(news_text__icontains=query)
         category_match = Category.objects.filter(category_name__icontains=query)
+        news_tags_match = News.objects.filter(news_tags__icontains=query)
         category_query_set = set()
         for category in category_match:
             news = News.objects.filter(category__exact=category)
@@ -39,6 +40,11 @@ class SearchListView(generic.ListView):
         for news_item in news_title_match:
             query_dict.update({news_item: 1})
         for news_item in news_text_match:
+            if news_item in query_dict:
+                query_dict.update({news_item: query_dict.get(news_item) + 1})
+            else:
+                query_dict.update({news_item: 1})
+        for news_item in news_tags_match:
             if news_item in query_dict:
                 query_dict.update({news_item: query_dict.get(news_item) + 1})
             else:
@@ -76,6 +82,7 @@ class NewsDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(NewsDetailView, self).get_context_data(**kwargs)
         news = News.objects.get(pk=self.kwargs.get('pk'))
+        news.news_text.replace('<', '&lt')
         for picture in news.pictures:
             news.news_text = news.news_text.replace('{' + f'{picture}' + '}', f'<img src="{news.pictures[picture]['url']}">')
         context['news'] = news

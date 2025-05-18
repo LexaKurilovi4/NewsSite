@@ -5,6 +5,7 @@ from .models import *
 from .test import HabrScrapper
 
 
+
 class NewsListView(generic.ListView):
     model = News
     template_name = 'news_portal/news_list.html'
@@ -26,13 +27,17 @@ class SearchListView(generic.ListView):
     context_object_name = 'page_obj'
 
     def get_context_data(self, **kwargs):
+        print("before query")
         context = super(SearchListView, self).get_context_data(**kwargs)
         query = self.kwargs['query'].replace('%20', ' ')
-        news_title_match = News.objects.filter(news_title__icontains=query)
-        news_text_match = News.objects.filter(news_text__icontains=query)
-        category_match = Category.objects.filter(category_name__icontains=query)
-        news_tags_match = News.objects.filter(news_tags__icontains=query)
+        query_re = r'(?gmiu)' + query
+        news_title_match = News.objects.filter(news_title__regex=query_re)
+        news_text_match = News.objects.filter(news_text__regex=query_re)
+        category_match = Category.objects.filter(category_name__regex=query_re)
+        news_tags_match = News.objects.filter(news_tags__regex=query_re)
+        print("after query")
         category_query_set = set()
+        print(category_match)
         for category in category_match:
             news = News.objects.filter(category__exact=category)
             category_query_set.update(news)
@@ -97,19 +102,11 @@ def get_tags(request):
         data['categories'] = data['categories'] + category.category_name + ';'
     for news in news_list:
         data['tags'] = data['tags'] + news.news_tags + ',' if news.news_tags else data['tags']
-    print(data)
     return JsonResponse(data)
 
 
 def scrapp_habr_news(request):
     scrapper = HabrScrapper()
-    # f = open("static/news_portal/habr.txt", "r")
-    # last_link = f.readline()
-    # f.close()
-    # with open("static/news_portal/habr.txt", "w") as file:
-    #     file.write(scrapper.news_links[0])
-    # if last_link in scrapper.news_links:
-    #     scrapper.news_links = scrapper.news_links[:scrapper.index(last_link)]
     authors = []
     for author in Author.objects.all():
         authors.append(author.author_name)
@@ -119,16 +116,17 @@ def scrapp_habr_news(request):
             author = Author(author_name=news_object["author_name"])
             author.save()
         News.objects.update_or_create(
-            id=news_object["id"],
             news_title=news_object["title"],
             title_picture=news_object["pictures"]["1"]["url"],
             news_text=news_object["news_text"],
             date_published=timezone.now(),
             source=Source.objects.filter(source_name__iexact=news_object["source"])[0],
             author=Author.objects.filter(author_name__iexact=news_object["author_name"])[0],
-            #category=Category.objects.filter(category_name__iexact=news_object["category_name"]),
             pictures=news_object["pictures"],
             news_tags=news_object["tags"]
         )
     return HttpResponseRedirect(reverse("news_portal:news_list"))
 
+
+if __name__ == '__main__':
+    scrapp_habr_news(None)

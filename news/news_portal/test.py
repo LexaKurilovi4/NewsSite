@@ -39,13 +39,16 @@ class HabrScrapper:
                 news_text += "{" + str(i) + "}"
                 i += 1
             if tag.name == "div":
-                news_pictures.update({f"v{i}": {"url": tag["data-src"]}})
-                news_text += "{v" + str(i) + "}"
-                i += 1
+                try:
+                    news_pictures.update({f"v{i}": {"url": tag["data-src"]}})
+                    news_text += "{v" + str(i) + "}"
+                    i += 1
+                except Exception:
+                    break
             if tag.name == "blockquote":
                 news_text += tag.p.text + "\n"
         if news_pictures == {}:
-            news_pictures.update({"1": {"url": "empty"}})
+            news_pictures.update({"1": {"url": "https://www.svgrepo.com/show/418518/brain-brainstorm-creative.svg"}})
         return {
             "id": news_link.split("/")[-2],
             "title": title,
@@ -56,3 +59,11 @@ class HabrScrapper:
             "pictures": news_pictures,
             "tags": tags
         }
+
+
+if __name__ == "__main__":
+    scrapper = HabrScrapper()
+    for link in scrapper.news_links:
+        print(link)
+        scrapper.get_news_body(link)
+        print("-" * 20)

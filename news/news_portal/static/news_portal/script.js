@@ -87,3 +87,8 @@ const search = (event) => {
 
 search_element.addEventListener("click", () => on_search_click())
 search_element.addEventListener("input", (e) => on_search_change(e))
+search_element.addEventListener("keydown", (e) => {
+	if (e.key == "Enter") {
+		send_search_request(`/search/${e.target.value}`)
+	}
+})

@@ -106,12 +106,13 @@ def get_tags(request):
 
 
 def scrapp_habr_news(request):
-    scrapper = HabrScrapper()
+    if request.method != "POST":
+        return HttpResponseRedirect(reverse("news_portal:news_list"))
+    data = request.POST
     authors = []
     for author in Author.objects.all():
         authors.append(author.author_name)
-    for link in scrapper.news_links:
-        news_object = scrapper.get_news_body(link)
+    for news_object in data.get("news"):
         if news_object["author_name"] not in authors:
             author = Author(author_name=news_object["author_name"])
             author.save()
